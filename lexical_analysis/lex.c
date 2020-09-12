@@ -109,24 +109,31 @@ char* getToken(char *start, char *end){
     return token;
 }
 
+/*
+ * forward: char* to start of operator
+ * returns: length of operator
+ */
+int getOperatorSize(char *forward){
+    char _twoOp[3], _threeOp[4];
+    int skipAhead = 1;
+
+    copyString(_twoOp, forward, 2);
+    copyString(_threeOp, forward, 3);
+
+    if(isOperator(_threeOp)){
+           skipAhead = 3; 
+    }
+    else if(isOperator(_twoOp)){
+           skipAhead = 2; 
+    }
+    return skipAhead;
+}
+
 void tokenize(char* string){
     char *lexemeBegin=string, *forward = string;
     while(*forward != '\0'){
         if(isOperator(charToString(forward[0]))){
-            // Handle two char and three char operators
-            char _twoOp[5], _threeOp[5];
-            int skipAhead = 1;
-
-            copyString(_twoOp, forward, 2);
-            copyString(_threeOp, forward, 3);
-
-            if(isOperator(_threeOp)){
-                   skipAhead = 3; 
-            }
-            else if(isOperator(_twoOp)){
-                   skipAhead = 2; 
-            }
-
+            int skipAhead = getOperatorSize(forward);
             if(lexemeBegin != forward){
                 const char* token = getToken(lexemeBegin, forward);
                 handleToken(token);
