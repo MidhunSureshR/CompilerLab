@@ -9,6 +9,56 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+static inline bool compareString(const char*, const char*);
+
+typedef struct node{
+        char symbol[30];
+        char type[10];
+        int id;
+        struct node* next;
+} tabNode;
+
+tabNode symTabHead;
+
+char lastToken[20];
+
+static inline void initSymtab(){
+        symTabHead.next = NULL;
+}
+
+void addSymtabEntry(const char* symbol, const char* type, int id){
+   tabNode* ptr = symTabHead.next;
+   tabNode* prev_ptr = &symTabHead;
+   while(ptr != NULL){ 
+       if(compareString(symbol, ptr->symbol)) return;
+       prev_ptr = ptr;
+       ptr = ptr-> next;
+   }
+
+   // Create a new Symbol Table Node
+   tabNode* newEntry = malloc(sizeof(tabNode));
+   strcpy(newEntry->symbol, symbol); 
+   strcpy(newEntry->type, type); 
+   newEntry->id = id;
+
+   // Add to end of list
+   prev_ptr->next = newEntry;
+}
+
+void prettyPrintSymtab(){
+    printf("--------------------------------------------\n");
+    printf("|%10s\t|%10s\t|%10s|\n", "Symbol", "Type", "Attribute");
+    printf("--------------------------------------------\n");
+    tabNode* ptr = symTabHead.next;
+    while(ptr != NULL){
+            char id[10];
+            sprintf(id, "id%d", ptr->id);
+            printf("|%10s\t|%10s\t|%10s|\n", ptr->symbol, ptr->type, id);
+            ptr = ptr->next;
+    }
+    printf("--------------------------------------------\n");
+}
+
 /* List of Keywords */
 const char *keyword[] = {
                         "auto", "break", "case", "char",
@@ -81,8 +131,11 @@ void handleToken(const char* token){
         printf("%s - %s\n",token, "Constant");
     else if(isString(token))
         printf("%s - %s\n",token, "String");
-    else if(isIdentifier(token))
+    else if(isIdentifier(token)){
         printf("%s - %s\n",token, "Identifier");
+        static int id = 0;
+        addSymtabEntry(token, lastToken, id++);
+    }
     else
         printf("%s - %s\n",token, "Unidentified");
 }
@@ -135,16 +188,16 @@ void tokenize(char* string){
         if(isOperator(charToString(forward[0]))){
             int skipAhead = getOperatorSize(forward);
             if(lexemeBegin != forward){
-                const char* token = getToken(lexemeBegin, forward);
+                char* token = getToken(lexemeBegin, forward);
                 handleToken(token);
+                copyString(lastToken, token, (int)(forward-lexemeBegin)); 
             }
-            char op[5];
+            char *operator;
             if(skipAhead == 1) {
-                    op[0] = forward[0];
-                    op[1] = '\0';
+                operator = charToString(forward[0]);
             }
-            else strncpy(op, forward, skipAhead);
-            if(op[0] != ' ') printf("\'%s\' - %s\n", op, "Operator");
+            else strncpy(operator, forward, skipAhead);
+            if(operator[0] != ' ') printf("\'%s\' - %s\n", operator, "Operator");
             forward += skipAhead;
             lexemeBegin = forward;
         }
@@ -156,6 +209,10 @@ int main(int argc, char **argv){
     char input[100];   
     printf("Enter the C code:\n");
     fgets(input, 100, stdin); 
+    initSymtab();
+    printf("\nTokens found are:\n");
     tokenize(input);
+    printf("\n\tSymbol Table Generated is:\n");
+    prettyPrintSymtab();
     return 0;
 }
