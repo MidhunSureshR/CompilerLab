@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <regex.h>
 
 /* List of Keywords */
 const char *keyword[] = {
@@ -27,6 +28,7 @@ const char *operator[] = {
                         "^=", "|=" , "{", "}", "(", ")", " ", ";",
                         "{", "}"
                         };
+//const char *operatorRegex = "\+|\*|\/|-|%|\+\+|--|==|\!=|>|<|<=|>=|&&|\|\||!|&|\||\^|~|<<|>>|=|\+=|-=|\*=|\/=|%=|<<=|>>=|&=|\^= |\|=| |{|}|\(|\)|;"
 const int operator_size = 41;
 
 
@@ -48,6 +50,24 @@ bool isOperator(const char* word){
     }
     return false;
 }
+
+/*bool isOperator(const char letter){
+    for(int i=0; i<operator_size; ++i){
+            if(strlen(operator[i]) == 1 && operator[i][0] == letter) return true;
+    }
+    return false;
+}
+*/
+
+/* bool getNextOperator(const char* remainingText){
+    regex_t reg;
+    int val = regcomp(reg, operatorRegex, REG_EXTENDED);
+    if(!val){
+        printf("Error: Regex Matching Failed.\n");
+        exit(0);
+    }
+    return true;
+} */
 
 bool isConstant(const char* word){
     const int len = strlen(word);
@@ -90,6 +110,12 @@ char* charToString(char character){
     return str;
 }
 
+void copyString(char *destination, char *source, const int len){
+        strncpy(destination, source, len);
+        // Null terminate string
+        *(destination + len) = '\0';
+}
+
 char* getToken(char *start, char *end){
     const int len = end - start;
     char* token = malloc(sizeof(char)*len);
@@ -97,18 +123,38 @@ char* getToken(char *start, char *end){
     return token;
 }
 
-
 void tokenize(char* string){
     const int len = strlen(string);
     char *lexemeBegin=string, *forward = string;
     while(*forward != '\0'){
         if(isOperator(charToString(forward[0]))){
+            // Handle two char and three char operators
+            char _twoOp[5], _threeOp[5];
+            int skipAhead = 1;
+
+            copyString(_twoOp, forward, 2);
+            copyString(_threeOp, forward, 3);
+
+            if(isOperator(_threeOp)){
+                   skipAhead = 3; 
+            }
+            else if(isOperator(_twoOp)){
+                   skipAhead = 2; 
+            }
+
             if(lexemeBegin != forward){
                 const char* token = getToken(lexemeBegin, forward);
                 handleToken(token);
             }
-            printf("\'%c\' - %s\n",forward[0], "Operator");
-            lexemeBegin = ++forward;
+            char op[5];
+            if(skipAhead == 1) {
+                    op[0] = forward[0];
+                    op[1] = '\0';
+            }
+            else strncpy(op, forward, skipAhead);
+            printf("\'%s\' - %s\n", op, "Operator");
+            forward += skipAhead;
+            lexemeBegin = forward;
         }
         else ++forward;
     }
