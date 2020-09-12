@@ -110,7 +110,6 @@ char* getToken(char *start, char *end){
 }
 
 void tokenize(char* string){
-    const int len = strlen(string);
     char *lexemeBegin=string, *forward = string;
     while(*forward != '\0'){
         if(isOperator(charToString(forward[0]))){
