@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <regex.h>
 
 /* List of Keywords */
 const char *keyword[] = {
@@ -28,9 +27,7 @@ const char *operator[] = {
                         "^=", "|=" , "{", "}", "(", ")", " ", ";",
                         "{", "}"
                         };
-//const char *operatorRegex = "\+|\*|\/|-|%|\+\+|--|==|\!=|>|<|<=|>=|&&|\|\||!|&|\||\^|~|<<|>>|=|\+=|-=|\*=|\/=|%=|<<=|>>=|&=|\^= |\|=| |{|}|\(|\)|;"
 const int operator_size = 41;
-
 
 static inline bool compareString(const char* string1, const char* string2){
     return strcmp(string1, string2) == 0 ? true : false;
