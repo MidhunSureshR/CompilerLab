@@ -1,3 +1,8 @@
+/*
+ * Lexical Analyzer for the C programming language
+ * Author R Midhun Suresh <rmidhunsuresh@gmail.com>
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -33,7 +38,7 @@ static inline bool compareString(const char* string1, const char* string2){
     return strcmp(string1, string2) == 0 ? true : false;
 }
 
-/* String Detection */
+/* Token Detection Helper Functions */
 bool isKeyword(const char* word){
     for(int i=0; i<keyword_size; ++i){
         if(compareString(keyword[i], word)) return true;
@@ -82,6 +87,7 @@ void handleToken(const char* token){
         printf("%s - %s\n",token, "Unidentified");
 }
 
+/* Generic Helper Functions */
 char* charToString(char character){
     char *str = malloc(sizeof(char) * 2);
     str[0] = character;
@@ -95,6 +101,7 @@ void copyString(char *destination, char *source, const int len){
         *(destination + len) = '\0';
 }
 
+/* Tokenization Main */
 char* getToken(char *start, char *end){
     const int len = end - start;
     char* token = malloc(sizeof(char)*len);
