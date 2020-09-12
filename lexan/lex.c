@@ -51,24 +51,6 @@ bool isOperator(const char* word){
     return false;
 }
 
-/*bool isOperator(const char letter){
-    for(int i=0; i<operator_size; ++i){
-            if(strlen(operator[i]) == 1 && operator[i][0] == letter) return true;
-    }
-    return false;
-}
-*/
-
-/* bool getNextOperator(const char* remainingText){
-    regex_t reg;
-    int val = regcomp(reg, operatorRegex, REG_EXTENDED);
-    if(!val){
-        printf("Error: Regex Matching Failed.\n");
-        exit(0);
-    }
-    return true;
-} */
-
 bool isConstant(const char* word){
     const int len = strlen(word);
     for(int i=0; i<len; ++i){
@@ -152,7 +134,7 @@ void tokenize(char* string){
                     op[1] = '\0';
             }
             else strncpy(op, forward, skipAhead);
-            printf("\'%s\' - %s\n", op, "Operator");
+            if(op[0] != ' ') printf("\'%s\' - %s\n", op, "Operator");
             forward += skipAhead;
             lexemeBegin = forward;
         }
