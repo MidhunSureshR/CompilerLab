@@ -80,9 +80,9 @@ const char *operator[] = {
                         "&", "|", "^", "~", "<<", ">>", "=", "+=",
                         "-=", "*=", "/=", "%=", "<<=", ">>=", "&=", 
                         "^=", "|=" , "{", "}", "(", ")", " ", ";",
-                        "{", "}"
+                        "{", "}", ","
                         };
-const int operator_size = 41;
+const int operator_size = 42;
 
 static inline bool compareString(const char* string1, const char* string2){
     return strcmp(string1, string2) == 0 ? true : false;
@@ -183,9 +183,15 @@ int getOperatorSize(char *forward){
 }
 
 void tokenize(char* string){
+    bool withinString = false;
     char *lexemeBegin=string, *forward = string;
     while(*forward != '\0'){
-        if(isOperator(charToString(forward[0]))){
+        if(forward[0] == '"' || forward[0] == '\''){ 
+            withinString = !withinString;
+            ++forward;
+        }
+        else if(withinString == false && isOperator(charToString(forward[0]))){
+            
             int skipAhead = getOperatorSize(forward);
             if(lexemeBegin != forward){
                 char* token = getToken(lexemeBegin, forward);
