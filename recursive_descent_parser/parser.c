@@ -5,8 +5,20 @@
  * E := E+T | T
  * T := a | a[] | a[X]
  * X := E,E | E
- *
+ * -------
+ * Accepting inputs:
+ * a+a
+ * a+a+a+...
+ * a[a]
+ * a[a,a]
+ * a+a[a]
+ * a+a[a,a]
+ * Non-accepting inputs:
+ * a+
+ * a[,a]
+ * a[a,]
  * */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
