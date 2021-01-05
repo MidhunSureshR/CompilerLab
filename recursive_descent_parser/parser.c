@@ -18,19 +18,21 @@
 char *lookahead = NULL;
 size_t input_length;
 
-bool _match(const char terminal, bool suppressError){
-    if(*lookahead == terminal){
-        lookahead++;       
+bool _match(const char terminal, bool suppressError)
+{
+    if (*lookahead == terminal)
+    {
+        lookahead++;
         return true;
     }
-    else if(!suppressError){
-        printf("Failed at character %c at position %d\n", *lookahead,(int)(input_length - strlen(lookahead)));
+    else if (!suppressError)
+    {
+        printf("Failed at character %c at position %d\n", *lookahead, (int)(input_length - strlen(lookahead)));
         fputs("Error: Cannot Parse Input String\n", stdout);
         exit(EXIT_FAILURE);
     }
     return false;
 }
-
 
 // Terminal Functions ahoy
 void X();
@@ -40,53 +42,68 @@ void T1();
 void T();
 void E1();
 
-
-void T2(){
-    if(match_optional(']')) return;
-    else{
+void T2()
+{
+    if (match_optional(']'))
+        return;
+    else
+    {
         X();
         match(']');
     }
 }
 
-void T1(){
-    if(match_optional('[')){
-            T2();
+void T1()
+{
+    if (match_optional('['))
+    {
+        T2();
     }
 }
 
-void T(){
+void T()
+{
     match('a');
     T1();
 }
 
-void E1(){
-    if(match_optional('+')){
+void E1()
+{
+    if (match_optional('+'))
+    {
         T();
         E1();
     }
 }
 
-void E(){
-        T();
-        E1();
+void E()
+{
+    T();
+    E1();
 }
 
-void X(){
+void X()
+{
     E();
-    if(match_optional(',')) E();
+    if (match_optional(','))
+        E();
 }
 
-
-int main(){
+int main()
+{
     char input[100];
     printf("Enter the input string:");
     scanf("%s", input);
     lookahead = input;
     input_length = strlen(input);
     E();
-    if(*lookahead == '\0'){
+    if (*lookahead == '\0')
+    {
         printf("Parsing is successful.\n");
+    }
+    else
+    {
+        printf("Parsing is unsuccessful.\n");
     }
     return 0;
 }
