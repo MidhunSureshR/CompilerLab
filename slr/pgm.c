@@ -3,6 +3,17 @@
  * <rmidhunsuresh@gmail.com>
  */
 
+/*
+    Grammar is 
+    E->E+T | T
+    T->id
+
+    Accepting input:
+    i+i
+    Rejecting input:
+    i+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
